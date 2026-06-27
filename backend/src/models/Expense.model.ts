@@ -50,8 +50,9 @@ const ExpenseSchema = new Schema<IExpense>(
     timestamps: true,
     toJSON: {
       transform: (_doc, ret) => {
-        delete ret.__v;
-        delete ret.receiptImagePublicId;
+        const r = ret as Record<string, unknown>;
+        delete r.__v;
+        delete r.receiptImagePublicId;
         return ret;
       },
     },

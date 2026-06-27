@@ -41,7 +41,7 @@ export class ExpenseService {
       groupId: new mongoose.Types.ObjectId(data.groupId),
       splitType: data.splitType,
       splits: computedSplits.map((s) => ({
-        userId: new mongoose.Types.ObjectId(s.userId),
+        userId: s.userId,
         amount: s.amount,
         percentage: s.percentage,
         isSettled: s.userId === data.paidBy, // payer's own share is auto-settled

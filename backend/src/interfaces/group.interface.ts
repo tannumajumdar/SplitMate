@@ -35,6 +35,6 @@ export interface ICreateGroupDTO {
 
 export interface IUpdateGroupDTO {
   name?: string;
-  description?: string;
+  description?: string | null;
   category?: GroupCategory;
 }

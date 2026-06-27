@@ -23,7 +23,7 @@ const SettlementSchema = new Schema<ISettlement>(
   },
   {
     timestamps: true,
-    toJSON: { transform: (_doc, ret) => { delete ret.__v; return ret; } },
+    toJSON: { transform: (_doc, ret) => { delete (ret as Record<string, unknown>).__v; return ret; } },
   }
 );
 

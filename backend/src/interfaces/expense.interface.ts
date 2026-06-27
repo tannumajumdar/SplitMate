@@ -44,6 +44,7 @@ export interface IExpenseSplitInput {
   userId: string;
   amount?: number;
   percentage?: number;
+  isSettled?: boolean;
 }
 
 export interface ICreateExpenseDTO {
@@ -62,7 +63,7 @@ export interface IUpdateExpenseDTO {
   title?: string;
   amount?: number;
   category?: ExpenseCategory;
-  notes?: string;
+  notes?: string | null;
   date?: Date;
 }
 
@@ -73,6 +74,6 @@ export interface IExpenseFilter {
   fromDate?: Date;
   toDate?: Date;
   search?: string;
-  page?: number;
-  limit?: number;
+  page?: number | string;
+  limit?: number | string;
 }

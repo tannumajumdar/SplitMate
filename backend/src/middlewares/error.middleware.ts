@@ -19,8 +19,9 @@ export const errorHandler = (
   }
 
   // Mongoose duplicate key
-  if ((err as NodeJS.ErrnoException).code === 11000) {
-    const field = Object.keys((err as Record<string, Record<string, unknown>>).keyValue ?? {})[0];
+  const mongoErr = err as { code?: number; keyValue?: Record<string, unknown> };
+  if (mongoErr.code === 11000) {
+    const field = Object.keys(mongoErr.keyValue ?? {})[0];
     error = ApiError.conflict(`${field ?? 'Field'} already exists`);
   }
 
