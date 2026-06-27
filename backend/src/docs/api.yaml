@@ -1,0 +1,41 @@
+openapi: 3.0.0
+info:
+  title: SplitMate API
+  version: 1.0.0
+  description: |
+    ## SplitMate – Roommate Expense Sharing API
+
+    ### Authentication Flow
+    1. `POST /auth/send-otp` – Send OTP to phone
+    2. `POST /auth/verify-otp` – Verify OTP → receive `accessToken` (body) + `refreshToken` (httpOnly cookie)
+    3. Pass `Authorization: Bearer <accessToken>` on all protected routes
+    4. `POST /auth/refresh` to get a new access token when expired
+
+    ### Splitting Logic
+    - **equal** – Split evenly across all active group members
+    - **percentage** – Each member's `percentage` field must be provided; must sum to 100
+    - **exact** – Each member's `amount` field must be provided; must sum to expense total
+
+    ### Balance Engine
+    `GET /groups/:id/balances` returns:
+    - Raw per-user balance (positive = is owed, negative = owes)
+    - Simplified debt transactions (greedy algorithm minimises number of payments)
+    - Your personal `owes` / `isOwed` breakdown
+
+tags:
+  - name: Auth
+    description: OTP-based phone authentication
+  - name: Users
+    description: User profile management
+  - name: Groups
+    description: Group creation and membership
+  - name: Expenses
+    description: Expense CRUD and receipt upload
+  - name: Settlements
+    description: Debt settlement tracking
+  - name: Balances
+    description: Balance calculation engine
+  - name: Analytics
+    description: Spending insights and charts
+  - name: Notifications
+    description: In-app notification feed

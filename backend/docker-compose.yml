@@ -1,0 +1,95 @@
+version: '3.9'
+
+services:
+  # ─── Application ─────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: splitmate-api
+    restart: unless-stopped
+    ports:
+      - '5000:5000'
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      MONGODB_URI: mongodb://mongo:27017/splitmate
+      REDIS_URL: redis://redis:6379
+    env_file:
+      - .env
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - splitmate-net
+    volumes:
+      - ./logs:/app/logs
+
+  # ─── MongoDB ─────────────────────────────────────────────────
+  mongo:
+    image: mongo:7.0
+    container_name: splitmate-mongo
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_DATABASE: splitmate
+    volumes:
+      - mongo-data:/data/db
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/init.js:ro
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - splitmate-net
+
+  # ─── Redis ───────────────────────────────────────────────────
+  redis:
+    image: redis:7.2-alpine
+    container_name: splitmate-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - splitmate-net
+
+  # ─── Mongo Express (Dev UI) ───────────────────────────────────
+  mongo-express:
+    image: mongo-express:1.0
+    container_name: splitmate-mongo-express
+    restart: unless-stopped
+    ports:
+      - '8081:8081'
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: splitmate123
+    depends_on:
+      - mongo
+    profiles:
+      - dev
+    networks:
+      - splitmate-net
+
+volumes:
+  mongo-data:
+  redis-data:
+
+networks:
+  splitmate-net:
+    driver: bridge
