@@ -7,16 +7,18 @@ export const createRoomSchema = z.object({
 
 export const addMemberSchema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
-  phone: z.string().trim().min(10, 'Enter a valid phone number').max(15),
+  email: z.string().trim().email('Enter a valid email address'),
+  phone: z.string().trim().max(15).optional(),
 });
 
 export const updateMemberSchema = z
   .object({
     name: z.string().trim().min(2).max(100).optional(),
-    phone: z.string().trim().min(10).max(15).optional(),
+    email: z.string().trim().email().optional(),
+    phone: z.string().trim().max(15).optional(),
   })
-  .refine((d) => d.name !== undefined || d.phone !== undefined, {
-    message: 'Provide at least name or phone to update',
+  .refine((d) => d.name !== undefined || d.phone !== undefined || d.email !== undefined, {
+    message: 'Provide at least one field to update',
   });
 
 export type CreateRoomInput = z.infer<typeof createRoomSchema>;

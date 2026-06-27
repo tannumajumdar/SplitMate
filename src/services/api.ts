@@ -188,6 +188,7 @@ function mapMember(raw: Record<string, unknown>): RoomMemberData {
     id: (raw._id ?? raw.id) as string,
     roomId: raw.roomId as string,
     name: raw.name as string,
+    email: (raw.email as string) ?? '',
     phone: (raw.phone as string) ?? '',
     addedBy: raw.addedBy as string,
     joinedAt: (raw.joinedAt ?? raw.createdAt) as string,
@@ -213,10 +214,10 @@ export const roomApi = {
     return res.data.members.map(mapMember);
   },
 
-  addMember: async (roomId: string, name: string, phone: string): Promise<RoomMemberData> => {
+  addMember: async (roomId: string, name: string, email: string, phone?: string): Promise<RoomMemberData> => {
     const res = await request<ApiOk<{ member: Record<string, unknown> }>>(`/rooms/${roomId}/members`, {
       method: 'POST',
-      body: JSON.stringify({ name, phone }),
+      body: JSON.stringify({ name, email, phone }),
     });
     return mapMember(res.data.member);
   },
@@ -224,7 +225,7 @@ export const roomApi = {
   updateMember: async (
     roomId: string,
     memberId: string,
-    data: { name?: string; phone?: string }
+    data: { name?: string; email?: string; phone?: string }
   ): Promise<RoomMemberData> => {
     const res = await request<ApiOk<{ member: Record<string, unknown> }>>(`/rooms/${roomId}/members/${memberId}`, {
       method: 'PATCH',

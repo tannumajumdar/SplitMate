@@ -35,43 +35,21 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-between p-6">
-      {/* Top spacer */}
-      <div />
-
+    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 gap-14">
       {/* Logo + Brand */}
-      <div className="flex flex-col items-center gap-6 w-full max-w-sm">
-        <div className="flex flex-col items-center gap-4">
-          <img src="/favicon.png" alt="SplitMate" className="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 object-contain mix-blend-multiply dark:mix-blend-screen" />
-          <div className="text-center">
-            <h1
-              className="font-extrabold text-[36px] sm:text-[42px] md:text-[48px] text-center leading-none"
-              style={{ letterSpacing: '-0.02em' }}
-            >
-              <span className="text-white">Split</span>
-              <span className="bg-gradient-to-br from-[#7C5CFF] to-[#9B6DFF] bg-clip-text text-transparent">Mate</span>
-            </h1>
-            <p className="text-slate-400 mt-2 text-base">
-              Split expenses with roommates, fairly and instantly.
-            </p>
-          </div>
-        </div>
-
-        {/* Feature highlights */}
-        <div className="grid grid-cols-3 gap-3 w-full mt-2">
-          {[
-            { emoji: '', label: 'Track' },
-            { emoji: '', label: 'Settle' },
-            { emoji: '', label: 'Split' },
-          ].map((f) => (
-            <div
-              key={f.label}
-              className="text-center py-3 rounded-2xl bg-slate-800/60 border border-slate-700/50"
-            >
-              <div className="text-2xl">{f.emoji}</div>
-              <p className="text-xs font-medium text-slate-400 mt-1">{f.label}</p>
-            </div>
-          ))}
+      <div className="flex flex-col items-center gap-5 w-full max-w-sm text-center">
+        <img src="/favicon.png" alt="SplitMate" className="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 object-contain mix-blend-multiply dark:mix-blend-screen" />
+        <div>
+          <h1
+            className="font-extrabold text-[36px] sm:text-[42px] md:text-[48px] leading-none"
+            style={{ letterSpacing: '-0.02em' }}
+          >
+            <span className="text-white">Split</span>
+            <span className="bg-gradient-to-br from-[#7C5CFF] to-[#9B6DFF] bg-clip-text text-transparent">Mate</span>
+          </h1>
+          <p className="text-slate-400 mt-3 text-base">
+            Split expenses with roommates, fairly and instantly.
+          </p>
         </div>
       </div>
 
@@ -89,7 +67,7 @@ export default function Landing() {
 
         <button
           onClick={() => navigate('/login')}
-          className="w-full h-12 rounded-xl border border-slate-600 text-white font-semibold text-sm hover:bg-slate-800 transition-colors"
+          className="w-full h-12 rounded-[14px] border border-slate-600 text-white font-semibold text-sm hover:bg-slate-800 hover:scale-[1.02] transition-all duration-200 cursor-pointer"
         >
           Log In
         </button>
@@ -97,7 +75,7 @@ export default function Landing() {
         <button
           onClick={handleGoogle}
           disabled={googleLoading}
-          className="w-full h-12 rounded-xl border border-slate-600 bg-white text-slate-800 font-semibold text-sm flex items-center justify-center gap-3 hover:bg-slate-50 transition-colors disabled:opacity-60"
+          className="w-full h-12 rounded-[14px] border border-slate-600 bg-white text-slate-800 font-semibold text-sm flex items-center justify-center gap-3 hover:bg-slate-50 hover:scale-[1.02] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
         >
           {googleLoading ? (
             <svg className="animate-spin h-4 w-4 text-slate-600" viewBox="0 0 24 24" fill="none">
@@ -117,7 +95,7 @@ export default function Landing() {
 
         <p className="text-center text-xs text-slate-500 pt-2">
           By continuing, you agree to our{' '}
-          <button onClick={() => navigate('/privacy-policy')} className="text-indigo-400 hover:underline">
+          <button onClick={() => navigate('/privacy-policy')} className="text-indigo-400 hover:underline cursor-pointer">
             Privacy Policy
           </button>
         </p>

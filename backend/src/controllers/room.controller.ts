@@ -65,17 +65,14 @@ export const getMembers = asyncHandler(async (req: Request, res: Response) => {
 
 // POST /rooms/:roomId/members
 export const addMember = asyncHandler(async (req: Request, res: Response) => {
-  const { name, phone } = req.body as AddMemberInput;
+  const { name, email, phone } = req.body as AddMemberInput;
   const room = await RoomModel.findOne({ _id: req.params.roomId, createdBy: req.userId });
   if (!room) throw ApiError.notFound('Room not found or access denied');
 
-  const member = await RoomMemberModel.create({
-    roomId: room._id,
-    name,
-    phone,
-    addedBy: req.userId,
-  });
+  const duplicate = await RoomMemberModel.findOne({ roomId: room._id, email: email.toLowerCase() });
+  if (duplicate) throw ApiError.conflict('A member with this email already exists in this room');
 
+  const member = await RoomMemberModel.create({ roomId: room._id, name, email, phone, addedBy: req.userId });
   ApiResponse.created(res, { member }, 'Member added');
 });
 

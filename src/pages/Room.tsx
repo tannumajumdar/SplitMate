@@ -9,6 +9,7 @@ import {
   IoCreateOutline,
   IoHomeOutline,
   IoCallOutline,
+  IoMailOutline,
   IoChevronForwardOutline,
   IoRefreshOutline,
 } from 'react-icons/io5';
@@ -18,9 +19,11 @@ import Input from '../components/common/Input';
 import Avatar from '../components/common/Avatar';
 import Badge from '../components/common/Badge';
 import Modal from '../components/common/Modal';
+import ToastContainer from '../components/common/Toast';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import { roomApi } from '../services/api';
+import { useToast } from '../hooks/useToast';
 import type { RoomData, RoomMemberData } from '../types';
 import { cn } from '../utils/helpers';
 
@@ -160,10 +163,13 @@ export default function Room() {
   const [deleteRoomOpen, setDeleteRoomOpen] = useState(false);
   const [deleteMemberOpen, setDeleteMemberOpen] = useState(false);
 
+  const { toasts, addToast, removeToast } = useToast();
+
   // Form state
   const [roomName, setRoomName] = useState('');
   const [roomDesc, setRoomDesc] = useState('');
   const [memberName, setMemberName] = useState('');
+  const [memberEmail, setMemberEmail] = useState('');
   const [memberPhone, setMemberPhone] = useState('');
   const [editingMember, setEditingMember] = useState<RoomMemberData | null>(null);
   const [deletingMember, setDeletingMember] = useState<RoomMemberData | null>(null);
@@ -207,15 +213,21 @@ export default function Room() {
   };
 
   const handleAddMember = async () => {
-    if (!memberName.trim()) { setError('Enter member name'); return; }
-    if (!/^\d{10}$/.test(memberPhone)) { setError('Enter a valid 10-digit mobile number'); return; }
+    if (!memberName.trim()) { setError('Name is required'); return; }
+    if (!memberEmail.trim()) { setError('Email is required'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(memberEmail.trim())) { setError('Enter a valid email address'); return; }
+    if (activeRoomMembers.some((m) => m.email?.toLowerCase() === memberEmail.trim().toLowerCase())) {
+      setError('A member with this email already exists in this room'); return;
+    }
+    if (memberPhone && !/^\d{10}$/.test(memberPhone)) { setError('Enter a valid 10-digit mobile number'); return; }
     if (!activeRoomId) { setError('Select a room first'); return; }
     setError(''); setLoading(true);
     try {
-      await roomApi.addMember(activeRoomId, memberName.trim(), memberPhone.trim());
-      await reloadMembers();
+      const newMember = await roomApi.addMember(activeRoomId, memberName.trim(), memberEmail.trim(), memberPhone.trim() || undefined);
+      setActiveRoomMembers((p) => [...p, newMember]);
       setAddMemberOpen(false);
-      setMemberName(''); setMemberPhone('');
+      setMemberName(''); setMemberEmail(''); setMemberPhone('');
+      addToast('Member added successfully.', 'success');
     } catch (e: unknown) {
       setError((e as Error).message ?? 'Failed to add member');
     } finally {
@@ -280,6 +292,7 @@ export default function Room() {
   const openEditMember = (m: RoomMemberData) => {
     setEditingMember(m);
     setMemberName(m.name);
+    setMemberEmail(m.email ?? '');
     setMemberPhone(m.phone);
     setError('');
     setEditMemberOpen(true);
@@ -292,6 +305,7 @@ export default function Room() {
 
   return (
     <div className="space-y-5 max-w-2xl mx-auto animate-fade-in">
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -328,7 +342,7 @@ export default function Room() {
         </div>
       ) : apiRooms.length === 0 ? (
         <Card className="text-center py-12">
-          <div className="text-5xl mb-3"> </div>
+          <div className="text-5xl mb-3"></div>
           <p className="text-sm font-medium text-slate-500 dark:text-slate-400">No rooms yet</p>
           <p className="text-xs text-slate-400 mt-1 mb-4">Create a room to start tracking expenses with your roommates</p>
           <Button size="sm" onClick={() => setCreateOpen(true)} icon={<IoAddOutline size={14} />}>
@@ -357,14 +371,14 @@ export default function Room() {
             <div className="flex items-center gap-2">
               <IoPeopleOutline size={16} className="text-slate-400" />
               <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                Members â€” {activeRoom.name}
+                Members  {activeRoom.name}
               </p>
               <Badge variant="default" size="sm">{activeRoomMembers.length}</Badge>
             </div>
             <Button
               size="xs"
               icon={<IoPersonAddOutline size={12} />}
-              onClick={() => { setMemberName(''); setMemberPhone(''); setError(''); setAddMemberOpen(true); }}
+              onClick={() => { setMemberName(''); setMemberEmail(''); setMemberPhone(''); setError(''); setAddMemberOpen(true); }}
             >
               Add Member
             </Button>
@@ -378,13 +392,13 @@ export default function Room() {
             </div>
           ) : activeRoomMembers.length === 0 ? (
             <div className="text-center py-8">
-              <div className="text-3xl mb-2">ðŸ‘¥</div>
+              <div className="text-3xl mb-2"></div>
               <p className="text-sm text-slate-500 dark:text-slate-400">No members found</p>
               <p className="text-xs text-slate-400 mt-1 mb-4">Add your roommates to start splitting expenses</p>
               <Button
                 size="sm"
                 icon={<IoPersonAddOutline size={14} />}
-                onClick={() => { setMemberName(''); setMemberPhone(''); setError(''); setAddMemberOpen(true); }}
+                onClick={() => { setMemberName(''); setMemberEmail(''); setMemberPhone(''); setError(''); setAddMemberOpen(true); }}
               >
                 Add Member
               </Button>
@@ -457,7 +471,7 @@ export default function Room() {
       {/* â”€â”€â”€ Add Member Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <Modal
         open={addMemberOpen}
-        onClose={() => { setAddMemberOpen(false); setError(''); }}
+        onClose={() => { setAddMemberOpen(false); setMemberName(''); setMemberEmail(''); setMemberPhone(''); setError(''); }}
         title="Add Member"
         size="sm"
       >
@@ -470,7 +484,15 @@ export default function Room() {
             autoFocus
           />
           <Input
-            label="Mobile Number"
+            label="Email Address"
+            type="email"
+            placeholder="rahul@example.com"
+            value={memberEmail}
+            onChange={(e) => { setMemberEmail(e.target.value); setError(''); }}
+            prefix={<IoMailOutline size={15} className="text-slate-400" />}
+          />
+          <Input
+            label="Mobile Number (Optional)"
             type="tel"
             inputMode="numeric"
             maxLength={10}

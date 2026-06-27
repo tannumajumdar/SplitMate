@@ -154,7 +154,7 @@ export default function AddExpense() {
           <IoCheckmarkCircle size={48} className="text-emerald-500" />
         </div>
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">Expense Added!</h2>
-        <p className="text-sm text-slate-400">Redirecting to expense historyâ€¦</p>
+        <p className="text-sm text-slate-400">Redirecting to expense history¦</p>
       </div>
     );
   }
@@ -163,7 +163,7 @@ export default function AddExpense() {
     return (
       <div className="max-w-lg mx-auto animate-fade-in">
         <Card className="text-center py-14">
-          <div className="text-5xl mb-3">ðŸ‘¥</div>
+          <div className="text-5xl mb-3"></div>
           <p className="text-base font-semibold text-slate-700 dark:text-slate-200 mb-1">No members found</p>
           <p className="text-sm text-slate-400 mb-6">
             {!activeRoomId
@@ -197,10 +197,10 @@ export default function AddExpense() {
             label="Amount"
             type="number"
             inputMode="decimal"
-            placeholder="0.00"
+            placeholder="e.g. 1000"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            prefix="â‚¹"
+            prefix=""
             error={errors.amount}
           />
           <div className="grid grid-cols-2 gap-3">
@@ -317,7 +317,7 @@ export default function AddExpense() {
                       type="number"
                       value={customAmounts[m.id] ?? ''}
                       onChange={(e) => setCustomAmounts((p) => ({ ...p, [m.id]: e.target.value }))}
-                      prefix="â‚¹"
+                      prefix=""
                       fullWidth={false}
                       className="w-24"
                     />
@@ -339,7 +339,7 @@ export default function AddExpense() {
       <Card>
         <TextArea
           label="Notes (optional)"
-          placeholder="Add a note about this expenseâ€¦"
+          placeholder=" about this expenses"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}

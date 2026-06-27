@@ -132,6 +132,7 @@ export interface RoomMemberData {
   id: string;
   roomId: string;
   name: string;
+  email: string;
   phone: string;
   addedBy: string;
   joinedAt: string;
