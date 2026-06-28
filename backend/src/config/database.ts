@@ -5,8 +5,8 @@ import { logger } from '../utils/logger';
 const mongooseOptions: mongoose.ConnectOptions = {
   autoIndex: env.isDevelopment,
   maxPoolSize: 10,
-  serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 45000,
+  serverSelectionTimeoutMS: 8000,
+  socketTimeoutMS: 20000,
 };
 
 // Cached promise — reused across warm serverless invocations so we never
@@ -14,6 +14,12 @@ const mongooseOptions: mongoose.ConnectOptions = {
 let connectionPromise: Promise<void> | null = null;
 
 export const connectDB = async (): Promise<void> => {
+  if (!env.db.uri) {
+    throw new Error(
+      'MONGODB_URI is not configured. Go to Vercel Dashboard → your project → Settings → Environment Variables and add MONGODB_URI with your MongoDB Atlas connection string.'
+    );
+  }
+
   // Already open — nothing to do
   if (mongoose.connection.readyState === 1) return;
 

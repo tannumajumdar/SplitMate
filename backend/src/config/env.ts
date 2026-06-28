@@ -3,14 +3,21 @@ import path from 'path';
 
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
+// Collect missing required vars without throwing — throwing at module init
+// crashes the serverless function before any handler is registered, causing 504.
+const _missing: string[] = [];
+
 const required = (key: string): string => {
   const value = process.env[key];
-  if (!value) throw new Error(`Missing required environment variable: ${key}`);
-  return value;
+  if (!value) _missing.push(key);
+  return value ?? '';
 };
 
 const optional = (key: string, fallback: string): string =>
   process.env[key] ?? fallback;
+
+/** Returns any required env vars that are not set. Empty array = all good. */
+export const getMissingEnvVars = (): string[] => [..._missing];
 
 export const env = {
   nodeEnv: optional('NODE_ENV', 'development'),
