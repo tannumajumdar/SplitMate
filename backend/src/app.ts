@@ -20,7 +20,8 @@ const ALLOWED_ORIGINS = [
   'http://localhost:5173',
   'http://localhost:5174',
   env.frontendUrl,
-  'https://splitmate.vercel.app',
+  'https://splimate.vercel.app',
+  'https://apisplitmate.vercel.app',
 ].filter(Boolean);
 
 const createApp = (): Application => {

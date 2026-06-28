@@ -1,0 +1,164 @@
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+
+h1 {
+  font-size: 32px;
+  margin: 0 0 32px;
+  color: var(--text-h);
+}
+
+/* Add form */
+.add-form {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.add-form h2 {
+  margin: 0 0 16px;
+  font-size: 18px;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.form-row input {
+  flex: 1;
+  min-width: 140px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-row input:focus {
+  border-color: var(--accent);
+}
+
+/* Table */
+.table-wrapper {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+thead {
+  background: var(--code-bg);
+}
+
+th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-h);
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-h);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr.editing td {
+  background: var(--accent-bg);
+}
+
+tr.editing input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.empty {
+  text-align: center;
+  color: var(--text);
+  padding: 32px 16px;
+}
+
+.muted {
+  color: var(--text);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* Buttons */
+.btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: opacity 0.15s;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+.btn-add {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-edit {
+  background: var(--social-bg);
+  border: 1px solid var(--border);
+  color: var(--text-h);
+}
+
+.btn-delete {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-save {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.btn-cancel {
+  background: var(--social-bg);
+  border: 1px solid var(--border);
+  color: var(--text-h);
+}
+
+.count {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--text);
+  text-align: right;
+}
