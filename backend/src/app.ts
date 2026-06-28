@@ -68,6 +68,11 @@ const createApp = (): Application => {
     })
   );
 
+  // ─── Root health check (used by Vercel / uptime monitors) ───────
+  app.get('/', (_req, res) => {
+    res.json({ status: 'OK', service: 'SplitMate API', timestamp: new Date().toISOString() });
+  });
+
   // ─── Routes ─────────────────────────────────────────────────────
   app.use(`/api/${env.apiVersion}`, routes);
 
