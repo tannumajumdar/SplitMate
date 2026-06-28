@@ -23,6 +23,6 @@ const RefreshTokenSchema = new Schema<IRefreshToken>(
 );
 
 RefreshTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-RefreshTokenSchema.index({ token: 1 });
+// token index comes from unique:true on the field definition
 
 export const RefreshToken = mongoose.model<IRefreshToken>('RefreshToken', RefreshTokenSchema);

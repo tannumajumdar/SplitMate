@@ -61,7 +61,6 @@ const UserSchema = new Schema<IUser>(
   }
 );
 
-UserSchema.index({ email: 1 });
-UserSchema.index({ googleId: 1 }, { sparse: true });
+// email index comes from unique:true; googleId index comes from sparse:true — no duplicates needed
 
 export const User = mongoose.model<IUser>('User', UserSchema);

@@ -49,7 +49,7 @@ const GroupSchema = new Schema<IGroup>(
   }
 );
 
-GroupSchema.index({ inviteCode: 1 });
+// inviteCode index comes from unique:true on the field definition
 GroupSchema.index({ 'members.userId': 1 });
 GroupSchema.index({ createdBy: 1 });
 GroupSchema.index({ status: 1 });
