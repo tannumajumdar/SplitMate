@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import mongoose from 'mongoose';
 import authRoutes from './auth.routes';
 import userRoutes from './user.routes';
 import groupRoutes from './group.routes';
@@ -13,7 +14,15 @@ const router = Router();
 
 // Health check
 router.get('/health', (_req: Request, res: Response) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString(), uptime: process.uptime() });
+  const state = mongoose.connection.readyState;
+  const dbStatus = state === 1 ? 'Connected' : state === 2 ? 'Connecting' : 'Disconnected';
+  res.json({
+    status: 'OK',
+    database: dbStatus,
+    server: 'Running',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
 });
 
 router.use('/auth', authRoutes);

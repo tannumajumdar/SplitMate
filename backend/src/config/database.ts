@@ -9,25 +9,43 @@ const mongooseOptions: mongoose.ConnectOptions = {
   socketTimeoutMS: 45000,
 };
 
+// Cached promise — reused across warm serverless invocations so we never
+// open a second connection while one is already in flight or established.
+let connectionPromise: Promise<void> | null = null;
+
 export const connectDB = async (): Promise<void> => {
-  try {
-    const conn = await mongoose.connect(env.db.uri, mongooseOptions);
-    logger.info(`MongoDB connected: ${conn.connection.host}`);
+  // Already open — nothing to do
+  if (mongoose.connection.readyState === 1) return;
 
-    mongoose.connection.on('disconnected', () => {
-      logger.warn('MongoDB disconnected. Attempting reconnect...');
-    });
+  // Reuse an in-flight promise so parallel warm invocations share one connect
+  if (!connectionPromise) {
+    connectionPromise = mongoose
+      .connect(env.db.uri, mongooseOptions)
+      .then((m) => {
+        logger.info(`MongoDB connected: ${m.connection.host}`);
 
-    mongoose.connection.on('error', (err) => {
-      logger.error('MongoDB connection error:', err);
-    });
-  } catch (error) {
-    logger.error('Failed to connect to MongoDB:', error);
-    process.exit(1);
+        mongoose.connection.on('disconnected', () => {
+          logger.warn('MongoDB disconnected — will reconnect on next request');
+          connectionPromise = null;
+        });
+
+        mongoose.connection.on('error', (err) => {
+          logger.error('MongoDB error:', err);
+          connectionPromise = null;
+        });
+      })
+      .catch((err) => {
+        logger.error('MongoDB connection failed:', err);
+        connectionPromise = null; // allow retry on next request
+        throw err; // propagate so the request gets a 503, not a hang
+      });
   }
+
+  await connectionPromise;
 };
 
 export const disconnectDB = async (): Promise<void> => {
+  connectionPromise = null;
   await mongoose.connection.close();
   logger.info('MongoDB connection closed.');
 };

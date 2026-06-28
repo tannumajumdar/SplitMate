@@ -23,7 +23,11 @@ const transports: winston.transport[] = [
   }),
 ];
 
-if (env.isProduction) {
+// Only write log files when running on a persistent server (not Vercel serverless).
+// Vercel's filesystem is read-only outside /tmp, so DailyRotateFile would crash.
+const isVercel = Boolean(process.env.VERCEL);
+
+if (env.isProduction && !isVercel) {
   transports.push(
     new DailyRotateFile({
       filename: path.join(env.logging.dir, 'error-%DATE%.log'),
