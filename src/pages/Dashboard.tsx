@@ -129,7 +129,7 @@ export default function Dashboard() {
         <p className="text-4xl font-bold tracking-tight mt-1">{formatCurrency(stats.thisMonthTotal)}</p>
         {stats.monthChange !== null && (
           <p className="text-sm opacity-80 mt-1">
-            {stats.monthChangeUp ? 'â–²' : 'â–¼'} {Math.abs(Number(stats.monthChange))}% vs last month
+            {stats.monthChangeUp ? '↑' : '↓'} {Math.abs(Number(stats.monthChange))}% vs last month
           </p>
         )}
         {stats.monthChange === null && (

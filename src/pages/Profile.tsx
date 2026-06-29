@@ -18,6 +18,8 @@ import {
   IoCashOutline,
   IoInformationCircleOutline,
   IoStarOutline,
+  IoStar,
+  IoCheckmarkCircle,
   IoChatbubblesOutline,
   IoCopyOutline,
   IoMailOpenOutline,
@@ -101,19 +103,19 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
 function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   const [hovered, setHovered] = useState(0);
   return (
-    <div className="flex gap-1 justify-center">
+    <div className="flex gap-2 justify-center">
       {[1, 2, 3, 4, 5].map((star) => (
         <button
           key={star}
           onMouseEnter={() => setHovered(star)}
           onMouseLeave={() => setHovered(0)}
           onClick={() => onChange(star)}
-          className="text-3xl transition-transform hover:scale-110"
+          className="transition-transform hover:scale-110 p-0.5"
         >
-          <span className={cn(
-            'transition-colors',
-            (hovered || value) >= star ? 'text-amber-400' : 'text-slate-200 dark:text-slate-700'
-          )}>â˜…</span>
+          {(hovered || value) >= star
+            ? <IoStar size={34} color="#f59e0b" />
+            : <IoStarOutline size={34} color="#cbd5e1" />
+          }
         </button>
       ))}
     </div>
@@ -396,10 +398,10 @@ export default function Profile() {
             <div>
               <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">Currency</label>
               <select value={editCurrency} onChange={(e) => setEditCurrency(e.target.value)} className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
-                <option value="INR">INR (â‚¹)</option>
+                <option value="INR">INR (&#8377;)</option>
                 <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (â‚¬)</option>
-                <option value="GBP">GBP (Â£)</option>
+                <option value="EUR">EUR (&euro;)</option>
+                <option value="GBP">GBP (&pound;)</option>
               </select>
             </div>
             <div>
@@ -440,7 +442,9 @@ export default function Profile() {
         <div className="space-y-5">
           {ratingDone ? (
             <div className="text-center py-6">
-              <div className="text-4xl mb-3">ðŸŽ‰</div>
+              <div className="flex justify-center mb-3">
+                <IoCheckmarkCircle size={52} className="text-emerald-500" />
+              </div>
               <p className="text-base font-semibold text-slate-900 dark:text-white">Thank you!</p>
               <p className="text-sm text-slate-400 mt-1">Your feedback helps us improve SplitMate.</p>
               <Button fullWidth className="mt-5" onClick={() => setRatingOpen(false)}>Done</Button>

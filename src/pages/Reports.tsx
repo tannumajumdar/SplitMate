@@ -155,14 +155,14 @@ export default function Reports() {
         {[
           {
             label: 'This Month',
-            value: currentMonth ? formatCurrency(currentMonth.total) : 'â‚¹0',
+            value: currentMonth ? formatCurrency(currentMonth.total) : '&#8377;0',
             badge: changePct ? `${change > 0 ? '+' : ''}${changePct}%` : null,
             color: change > 0 ? 'danger' : 'success',
           },
           { label: 'Monthly Avg', value: formatCurrency(avgMonthly), badge: null, color: 'default' },
           {
             label: 'Top Category',
-            value: topCategoryMeta?.label ?? 'â€”',
+            value: topCategoryMeta?.label ?? '-',
             badge: topCategoryMeta?.icon ?? null,
             color: 'info',
           },
@@ -191,7 +191,7 @@ export default function Reports() {
               return (
                 <div key={m.month} className="flex-1 flex flex-col items-center gap-1 min-w-0">
                   <span className="text-[9px] text-slate-400 font-medium leading-none">
-                    {formatCurrency(m.total).replace('â‚¹', '').replace(',', '')}
+                    {formatCurrency(m.total).replace(/[^\d.]/g, '')}
                   </span>
                   <div className="w-full flex items-end" style={{ height: '80px' }}>
                     <div
@@ -257,7 +257,7 @@ export default function Reports() {
                       <span className="text-sm font-bold text-slate-900 dark:text-white">{formatCurrency(m.total)}</span>
                       {pct && (
                         <Badge variant={diff > 0 ? 'danger' : 'success'} size="sm">
-                          {diff > 0 ? 'â†‘' : 'â†“'} {Math.abs(Number(pct))}%
+                          {diff > 0 ? '+' : '-'} {Math.abs(Number(pct))}%
                         </Badge>
                       )}
                     </div>

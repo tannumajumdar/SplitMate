@@ -3,6 +3,7 @@ import { Schema, model, Document, Types } from 'mongoose';
 export interface IRoomMember extends Document {
   _id: Types.ObjectId;
   roomId: Types.ObjectId;
+  userId?: Types.ObjectId;
   name: string;
   email: string;
   phone: string;
@@ -13,6 +14,7 @@ export interface IRoomMember extends Document {
 const RoomMemberSchema = new Schema<IRoomMember>(
   {
     roomId: { type: Schema.Types.ObjectId, ref: 'Room', required: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'User', sparse: true },
     name: { type: String, required: true, trim: true, maxlength: 100 },
     email: { type: String, required: false, trim: true, lowercase: true, maxlength: 255, default: '' },
     phone: { type: String, required: false, trim: true, maxlength: 20, default: '' },

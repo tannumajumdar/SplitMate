@@ -311,7 +311,7 @@ export default function Room() {
         <div>
           <h2 className="text-lg font-bold text-slate-900 dark:text-white">My Rooms</h2>
           <p className="text-sm text-slate-400">
-            {apiRoomsLoading ? 'Loadingâ€¦' : `${apiRooms.length} room${apiRooms.length !== 1 ? 's' : ''}`}
+            {apiRoomsLoading ? 'Loading...' : `${apiRooms.length} room${apiRooms.length !== 1 ? 's' : ''}`}
           </p>
         </div>
         <div className="flex gap-2">

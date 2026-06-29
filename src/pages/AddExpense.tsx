@@ -106,7 +106,7 @@ export default function AddExpense() {
     }
     if (splitMethod === 'custom') {
       const total = Object.values(customAmounts).reduce((a, v) => a + parseFloat(v || '0'), 0);
-      if (Math.abs(total - parseFloat(amount)) > 0.5) e.split = `Custom amounts must sum to â‚¹${amount}`;
+      if (Math.abs(total - parseFloat(amount)) > 0.5) e.split = `Custom amounts must sum to ₹${amount}`;
     }
     return e;
   };
@@ -324,7 +324,7 @@ export default function AddExpense() {
                   )}
                   {selected && splitMethod === 'equal' && amount && (
                     <span className="text-sm font-medium text-slate-500 dark:text-slate-400 w-20 text-right shrink-0">
-                      â‚¹{(parseFloat(amount) / (selectedMembers.length || 1)).toFixed(0)}
+                      ₹{(parseFloat(amount) / (selectedMembers.length || 1)).toFixed(0)}
                     </span>
                   )}
                 </div>

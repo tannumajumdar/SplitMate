@@ -21,6 +21,11 @@ export const updateMemberSchema = z
     message: 'Provide at least one field to update',
   });
 
+export const joinRoomSchema = z.object({
+  inviteCode: z.string().trim().min(4).max(10),
+});
+
 export type CreateRoomInput = z.infer<typeof createRoomSchema>;
 export type AddMemberInput = z.infer<typeof addMemberSchema>;
 export type UpdateMemberInput = z.infer<typeof updateMemberSchema>;
+export type JoinRoomInput = z.infer<typeof joinRoomSchema>;

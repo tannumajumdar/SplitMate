@@ -2,56 +2,41 @@ import { NavLink } from 'react-router-dom';
 import {
   IoHomeOutline, IoHome,
   IoPeopleOutline, IoPeople,
-  IoAddCircle,
+  IoReceiptOutline, IoReceipt,
   IoSwapHorizontalOutline, IoSwapHorizontal,
   IoPersonOutline, IoPerson,
 } from 'react-icons/io5';
 import { cn } from '../../utils/helpers';
 
-const navItems = [
-  { label: 'Home', to: '/dashboard', icon: <IoHomeOutline size={22} />, activeIcon: <IoHome size={22} /> },
-  { label: 'Room', to: '/room', icon: <IoPeopleOutline size={22} />, activeIcon: <IoPeople size={22} /> },
-  { label: 'Add', to: '/add-expense', icon: <IoAddCircle size={28} />, activeIcon: <IoAddCircle size={28} />, center: true },
-  { label: 'Settle', to: '/settlements', icon: <IoSwapHorizontalOutline size={22} />, activeIcon: <IoSwapHorizontal size={22} /> },
-  { label: 'Profile', to: '/profile', icon: <IoPersonOutline size={22} />, activeIcon: <IoPerson size={22} /> },
+const NAV_ITEMS = [
+  { label: 'Home',     to: '/dashboard',   icon: IoHomeOutline,            activeIcon: IoHome            },
+  { label: 'Rooms',    to: '/room',        icon: IoPeopleOutline,          activeIcon: IoPeople          },
+  { label: 'Expenses', to: '/expenses',    icon: IoReceiptOutline,         activeIcon: IoReceipt         },
+  { label: 'Settle',   to: '/settlements', icon: IoSwapHorizontalOutline,  activeIcon: IoSwapHorizontal  },
+  { label: 'Profile',  to: '/profile',     icon: IoPersonOutline,          activeIcon: IoPerson          },
 ];
 
 export default function MobileNav() {
   return (
-    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 safe-bottom">
-      <div className="flex items-center h-16 px-2">
-        {navItems.map((item) => (
+    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-slate-900 dark:bg-slate-950 border-t border-slate-800">
+      <div className="flex items-stretch h-[62px] px-1">
+        {NAV_ITEMS.map(({ label, to, icon: Icon, activeIcon: ActiveIcon }) => (
           <NavLink
-            key={item.to}
-            to={item.to}
+            key={to}
+            to={to}
             className={({ isActive }) =>
               cn(
-                'flex flex-col items-center justify-center flex-1 gap-0.5 text-[10px] font-medium transition-colors',
-                item.center
-                  ? 'relative'
-                  : isActive
-                  ? 'text-primary-600 dark:text-primary-400'
-                  : 'text-slate-400 dark:text-slate-500'
+                'flex flex-col items-center justify-center flex-1 gap-1 text-[10px] font-semibold transition-colors pt-1',
+                isActive ? 'text-primary-400' : 'text-slate-500'
               )
             }
           >
-            {({ isActive }) =>
-              item.center ? (
-                <span
-                  className={cn(
-                    'w-12 h-12 rounded-2xl flex items-center justify-center shadow-glow -translate-y-3',
-                    'bg-gradient-brand text-white'
-                  )}
-                >
-                  {item.icon}
-                </span>
-              ) : (
-                <>
-                  {isActive ? item.activeIcon : item.icon}
-                  <span>{item.label}</span>
-                </>
-              )
-            }
+            {({ isActive }) => (
+              <>
+                {isActive ? <ActiveIcon size={22} /> : <Icon size={22} />}
+                <span>{label}</span>
+              </>
+            )}
           </NavLink>
         ))}
       </div>

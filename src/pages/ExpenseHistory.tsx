@@ -134,7 +134,7 @@ export default function ExpenseHistory() {
       <div className="flex gap-2">
         <div className="flex-1">
           <Input
-            placeholder="Search expensesâ€¦"
+            placeholder="Search expenses..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             prefix={<IoSearchOutline size={16} />}
@@ -202,7 +202,7 @@ export default function ExpenseHistory() {
       {/* Results summary */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          {expensesLoading ? 'Loadingâ€¦' : `${filtered.length} expense${filtered.length !== 1 ? 's' : ''}`}
+          {expensesLoading ? 'Loading...' : `${filtered.length} expense${filtered.length !== 1 ? 's' : ''}`}
         </p>
         {activeFilterCount > 0 && (
           <button onClick={clearFilters} className="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-500">
@@ -285,7 +285,7 @@ export default function ExpenseHistory() {
             type="number"
             value={editAmount}
             onChange={(e) => { setEditAmount(e.target.value); setEditError(''); }}
-            prefix="â‚¹"
+            prefix="&#8377;"
           />
           <div className="grid grid-cols-2 gap-3">
             <Select

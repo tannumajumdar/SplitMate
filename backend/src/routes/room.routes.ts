@@ -3,7 +3,7 @@ import * as roomController from '../controllers/room.controller';
 import * as roomExpenseController from '../controllers/roomExpense.controller';
 import { authenticate } from '../middlewares/auth.middleware';
 import { validate } from '../middlewares/validate.middleware';
-import { createRoomSchema, addMemberSchema, updateMemberSchema } from '../validators/room.validator';
+import { createRoomSchema, addMemberSchema, updateMemberSchema, joinRoomSchema } from '../validators/room.validator';
 
 const router = Router();
 
@@ -11,6 +11,7 @@ router.use(authenticate);
 
 // ─── Room CRUD ───────────────────────────────────────────────────────────────
 router.post('/', validate(createRoomSchema), roomController.createRoom);
+router.post('/join', validate(joinRoomSchema), roomController.joinRoom);
 router.get('/', roomController.getRooms);
 router.get('/:roomId', roomController.getRoom);
 router.delete('/:roomId', roomController.deleteRoom);

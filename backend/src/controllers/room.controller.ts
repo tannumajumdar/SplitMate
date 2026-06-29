@@ -25,16 +25,17 @@ async function uniqueInviteCode(): Promise<string> {
 export const createRoom = asyncHandler(async (req: Request, res: Response) => {
   const { name, description } = req.body as CreateRoomInput;
 
-  const creator = await User.findById(req.userId).select('name').lean();
+  const creator = await User.findById(req.userId).select('name email').lean();
   if (!creator) throw ApiError.notFound('User not found');
 
   const inviteCode = await uniqueInviteCode();
   const room = await RoomModel.create({ name, description, createdBy: req.userId, inviteCode });
 
-  // Auto-add creator as the first member (no phone since auth is now email-based)
   await RoomMemberModel.create({
     roomId: room._id,
+    userId: req.userId,
     name: creator.name,
+    email: creator.email ?? '',
     phone: '',
     addedBy: req.userId,
   });
@@ -42,15 +43,25 @@ export const createRoom = asyncHandler(async (req: Request, res: Response) => {
   ApiResponse.created(res, { room }, 'Room created');
 });
 
-// GET /rooms
+// GET /rooms — returns rooms the user created OR joined via invite
 export const getRooms = asyncHandler(async (req: Request, res: Response) => {
-  const rooms = await RoomModel.find({ createdBy: req.userId }).sort({ createdAt: -1 }).lean();
+  const memberRecords = await RoomMemberModel.find({ userId: req.userId }).select('roomId').lean();
+  const joinedRoomIds = memberRecords.map((m) => m.roomId);
+
+  const rooms = await RoomModel.find({
+    $or: [{ createdBy: req.userId }, { _id: { $in: joinedRoomIds } }],
+  }).sort({ createdAt: -1 }).lean();
+
   ApiResponse.success(res, { rooms });
 });
 
 // GET /rooms/:roomId
 export const getRoom = asyncHandler(async (req: Request, res: Response) => {
-  const room = await RoomModel.findOne({ _id: req.params.roomId, createdBy: req.userId }).lean();
+  const memberRecord = await RoomMemberModel.findOne({ roomId: req.params.roomId, userId: req.userId });
+  const room = await RoomModel.findOne({
+    _id: req.params.roomId,
+    $or: [{ createdBy: req.userId }, { _id: memberRecord?.roomId }],
+  }).lean();
   if (!room) throw ApiError.notFound('Room not found');
   ApiResponse.success(res, { room });
 });
@@ -74,6 +85,35 @@ export const addMember = asyncHandler(async (req: Request, res: Response) => {
 
   const member = await RoomMemberModel.create({ roomId: room._id, name, email, phone, addedBy: req.userId });
   ApiResponse.created(res, { member }, 'Member added');
+});
+
+// POST /rooms/join
+export const joinRoom = asyncHandler(async (req: Request, res: Response) => {
+  const { inviteCode } = req.body as { inviteCode: string };
+  if (!inviteCode) throw ApiError.badRequest('Invite code is required');
+
+  const room = await RoomModel.findOne({ inviteCode: inviteCode.trim().toUpperCase() }).lean();
+  if (!room) throw ApiError.notFound('Invalid invite code. Please check and try again.');
+
+  const user = await User.findById(req.userId).select('name email').lean();
+  if (!user) throw ApiError.notFound('User not found');
+
+  const existing = await RoomMemberModel.findOne({
+    roomId: room._id,
+    $or: [{ userId: req.userId }, { email: user.email.toLowerCase() }],
+  });
+  if (existing) throw ApiError.conflict('You are already a member of this room');
+
+  const member = await RoomMemberModel.create({
+    roomId: room._id,
+    userId: req.userId,
+    name: user.name,
+    email: user.email,
+    phone: '',
+    addedBy: req.userId,
+  });
+
+  ApiResponse.created(res, { room, member }, 'Joined room successfully');
 });
 
 // PATCH /rooms/:roomId/members/:memberId

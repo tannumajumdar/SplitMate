@@ -19,7 +19,7 @@ export default function Settlements() {
     for (const split of exp.splits) {
       if (!split.isPaid && split.userId !== exp.paidBy) {
         // split.userId owes exp.paidBy this amount
-        const key = `${split.userId}â†’${exp.paidBy}`;
+        const key = `${split.userId}->${exp.paidBy}`;
         balances[key] = (balances[key] ?? 0) + split.amount;
       }
     }
@@ -70,7 +70,7 @@ export default function Settlements() {
             {entries.length} pending balance{entries.length !== 1 ? 's' : ''}
           </p>
           {entries.map(([key, amount]) => {
-            const [fromId, toId] = key.split('â†’');
+            const [fromId, toId] = key.split('->');
             return (
               <Card key={key} className="flex items-center gap-4 p-4">
                 <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center shrink-0">
