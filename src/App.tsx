@@ -1,4 +1,4 @@
-﻿import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AppProvider } from './context/AppContext';
@@ -18,6 +18,7 @@ import Settlements from './pages/Settlements';
 import Reports from './pages/Reports';
 import Profile from './pages/Profile';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfUse from './pages/TermsOfUse';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -27,7 +28,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <img src="/favicon.png" alt="SplitMate" className="w-20 h-20 object-contain animate-pulse mix-blend-screen" />
-          <p className="text-sm text-slate-400">Loading SplitMateâ€¦</p>
+          <p className="text-sm text-slate-400">Loading SplitMate...</p>
         </div>
       </div>
     );
@@ -53,8 +54,12 @@ function AppRoutes() {
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
         <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
-        {/* Reset password â€” public even when logged in */}
         <Route path="/reset-password" element={<ResetPassword />} />
+
+        {/* Public legal routes — accessible without login */}
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-use" element={<TermsOfUse />} />
+        <Route path="/terms" element={<Navigate to="/terms-of-use" replace />} />
 
         {/* Protected app routes */}
         <Route
@@ -71,9 +76,9 @@ function AppRoutes() {
           <Route path="/settlements" element={<Settlements />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         </Route>
 
+        {/* 404 fallback */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </>
@@ -93,4 +98,3 @@ export default function App() {
     </ThemeProvider>
   );
 }
-

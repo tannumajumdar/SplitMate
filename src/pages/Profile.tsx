@@ -569,7 +569,7 @@ export default function Profile() {
           <div className="flex gap-2">
             <button onClick={() => { setAboutOpen(false); navigate('/privacy-policy'); }} className="flex-1 text-sm text-indigo-500 hover:underline py-2">Privacy Policy</button>
             <span className="text-slate-200 dark:text-slate-700 self-center">|</span>
-            <button onClick={() => { setAboutOpen(false); window.open(`mailto:${SUPPORT_EMAIL}`, '_blank'); }} className="flex-1 text-sm text-indigo-500 hover:underline py-2">Terms of Service</button>
+            <button onClick={() => { setAboutOpen(false); navigate('/terms-of-use'); }} className="flex-1 text-sm text-indigo-500 hover:underline py-2">Terms of Use</button>
           </div>
         </div>
       </Modal>
